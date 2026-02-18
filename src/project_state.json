@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 25,
+  "summary": "Simple book review platform where users can post public reviews, like and comment on others’ reviews, and track their own reading progress, including a reader dashboard for monitoring reading metrics (pages, books, hours).",
+  "architectural_notes": [],
+  "known_issues": [
+    "Reader Dashboard page is not visible/accessible in the deployed app (user reports they cannot see the dashboard yet).",
+    "Deployment/publishing is failing, so no new draft is produced and recent UI updates (including the Dashboard link/route) are not going live.",
+    "Full publication (go-live) of Draft Version 7 failed with a deployment error after the draft was successfully created.",
+    "Login/authentication does not work when accessing the app from a laptop (user reports login failure on desktop)."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-frontend-create-a-simple-ui-to-browse-public-reviews-view-a-review-detail-page-with-its-comments-and-allow-signed-in-users-to-create-reviews-like-unlike-reviews-and-add-comments",
+      "title": "Frontend: Create a simple UI to browse public reviews, view a review detail page with its comments, and allow signed-in users to create reviews, like/unlike reviews, and add comments.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-frontend-create-a-simple-my-reading-tracker-page-for-signed-in-users-to-add-books-update-status-progress-and-remove-books-using-react-query-for-canister-calls-and-caching",
+      "title": "Frontend: Create a simple 'My Reading Tracker' page for signed-in users to add books, update status/progress, and remove books, using React Query for canister calls and caching.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-frontend-add-a-coherent-simple-visual-theme-colors-typography-spacing-and-component-styling-and-apply-it-consistently-across-the-review-feed-review-detail-and-reading-tracker-pages",
+      "title": "Frontend: Add a coherent, simple visual theme (colors, typography, spacing, and component styling) and apply it consistently across the review feed, review detail, and reading tracker pages.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-reading-tracker-ui-to-capture-and-update-per-book-reading-metrics-needed-for-the-dashboard-pages-read-and-hours-spent-in-addition-to-existing-status-and-percentage-progress",
+      "title": "Extend the Reading Tracker UI to capture and update per-book reading metrics needed for the dashboard (pages read and hours spent) in addition to existing status and percentage progress.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-reader-dashboard-page-that-displays-reading-metrics-pages-books-hours-for-the-authenticated-user-and-add-navigation-and-routing-to-access-it",
+      "title": "Create a new Reader Dashboard page that displays reading metrics (pages, books, hours) for the authenticated user, and add navigation and routing to access it.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-reader-dashboard-reachable-from-the-ui-on-all-screen-sizes-by-adding-a-small-screen-navigation-option-that-includes-a-link-to-the-dashboard-route-dashboard-in-addition-to-the-existing-desktop-header-navigation",
+      "title": "Make the Reader Dashboard reachable from the UI on all screen sizes by adding a small-screen navigation option that includes a link to the Dashboard route (/dashboard), in addition to the existing desktop header navigation.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-secondary-in-page-navigation-affordance-to-help-users-discover-the-dashboard-such-as-a-visible-link-button-to-dashboard-on-the-reading-tracker-page-for-authenticated-users",
+      "title": "Add a secondary, in-page navigation affordance to help users discover the Dashboard, such as a visible link/button to /dashboard on the Reading Tracker page for authenticated users.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-any-typescript-build-typecheck-errors-that-prevent-a-successful-frontend-build-and-deployment-including-removing-or-using-unused-imports-variables-that-would-fail-compilation-in-strict-settings",
+      "title": "Fix any TypeScript build/typecheck errors that prevent a successful frontend build and deployment, including removing or using unused imports/variables that would fail compilation in strict settings.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-reader-dashboard-remains-reachable-in-the-deployed-app-via-the-existing-dashboard-route-and-primary-navigation-link-after-the-deployment-fix-so-users-can-access-the-page-once-the-new-draft-is-published",
+      "title": "Ensure the Reader Dashboard remains reachable in the deployed app via the existing /dashboard route and primary navigation link after the deployment fix, so users can access the page once the new draft is published.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-footer-link-generation-resilient-so-it-does-not-crash-builds-or-runtime-in-non-browser-contexts-by-avoiding-unconditional-use-of-window-location-hostname-when-computing-the-caffeine-ai-referral-url",
+      "title": "Make the footer link generation resilient so it does not crash builds or runtime in non-browser contexts by avoiding unconditional use of `window.location.hostname` when computing the caffeine.ai referral URL.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-publish-the-current-build-draft-of-the-app-so-the-latest-frontend-and-backend-changes-are-deployed-and-verify-the-deployed-app-exposes-the-reader-dashboard-at-the-existing-route-dashboard-and-via-the-primary-navigation-link",
+      "title": "Publish the current build/draft of the app so the latest frontend and backend changes are deployed, and verify the deployed app exposes the Reader Dashboard at the existing route (/dashboard) and via the primary navigation link.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fully-publish-the-currently-deployed-draft-of-the-app-not-just-a-draft-deployment-and-then-manually-verify-the-published-build-using-the-existing-deployment-smoke-check-including-confirming-the-reader-dashboard-is-accessible-at-dashboard-and-via-the-primary-navigation-on-both-desktop-and-mobile",
+      "title": "Fully publish the currently deployed draft of the app (not just a draft deployment) and then manually verify the published build using the existing deployment smoke check, including confirming the Reader Dashboard is accessible at `/dashboard` and via the primary navigation on both desktop and mobile.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-identify-the-root-cause-of-the-production-go-live-failure-deployment-error-that-occurred-while-fully-publishing-draft-version-7-and-apply-the-minimal-code-configuration-changes-needed-so-the-app-can-be-fully-published-successfully",
+      "title": "Identify the root cause of the production go-live failure (“Deployment error”) that occurred while fully publishing Draft Version 7, and apply the minimal code/configuration changes needed so the app can be fully published successfully.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-the-publication-succeeds-manually-verify-the-fully-published-build-using-the-existing-checklist-in-frontend-deployment-smoke-check-md-ensuring-that-all-core-routes-load-and-that-dashboard-is-reachable-via-navigation-on-desktop-and-mobile",
+      "title": "After the publication succeeds, manually verify the fully published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that Dashboard is reachable via navigation on desktop and mobile.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-simple-user-visible-way-for-users-to-get-the-app-s-url-from-within-the-ui-e-g-a-copy-app-link-control-in-the-footer-or-header-so-users-can-easily-obtain-the-link-after-the-app-is-fully-published",
+      "title": "Add a simple, user-visible way for users to get the app’s URL from within the UI (e.g., a \"Copy app link\" control in the footer or header) so users can easily obtain the link after the app is fully published.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-app-s-light-mode-ux-to-use-an-attractive-light-color-palette-by-refining-the-theme-tokens-background-foreground-card-muted-accent-primary-border-input-ring-and-ensuring-the-resulting-styling-is-applied-consistently-across-all-existing-pages-reviews-feed-review-detail-reading-tracker-reader-dashboard-and-shared-layout-elements-header-mobile-nav-sheet-footer",
+      "title": "Update the app’s light-mode UX to use an attractive light color palette by refining the theme tokens (background, foreground, card, muted, accent, primary, border/input/ring) and ensuring the resulting styling is applied consistently across all existing pages (Reviews Feed, Review Detail, Reading Tracker, Reader Dashboard) and shared layout elements (header, mobile nav sheet, footer).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-site-branding-text-to-use-the-app-name-book-readers-wherever-it-appears-in-the-ui-shell-at-minimum-the-header-brand-label-the-footer-copyright-line-and-the-html-document-title",
+      "title": "Update the site branding text to use the app name “Book Readers” wherever it appears in the UI shell (at minimum: the header brand label, the footer copyright line, and the HTML document title).",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-header-and-footer-styling-so-they-use-clearly-different-background-colors-from-each-other-while-maintaining-readable-contrast-in-both-light-and-dark-mode-without-changing-the-overall-page-layout-or-navigation-structure",
+      "title": "Change the header and footer styling so they use clearly different background colors from each other while maintaining readable contrast in both light and dark mode, without changing the overall page layout or navigation structure.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reproduce-and-fix-the-internet-identity-authentication-flow-so-that-users-can-successfully-log-in-when-accessing-the-app-from-a-laptop-desktop-browser",
+      "title": "Reproduce and fix the Internet Identity authentication flow so that users can successfully log in when accessing the app from a laptop/desktop browser.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-the-internet-identity-configuration-so-it-is-valid-in-production-across-devices-by-ensuring-the-identityprovider-and-derivationorigin-configuration-used-by-authclient-login-are-always-set-to-correct-production-safe-values-including-a-safe-fallback-when-environment-values-are-missing",
+      "title": "Harden the Internet Identity configuration so it is valid in production across devices by ensuring the identityProvider and derivationOrigin configuration used by `AuthClient.login()` are always set to correct, production-safe values (including a safe fallback when environment values are missing).",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-desktop-laptop-login-ux-resilience-by-detecting-and-handling-common-desktop-failure-modes-e-g-popup-blocked-interrupted-login-stale-already-authenticated-client-state-and-providing-a-reliable-recovery-path-using-the-existing-login-button",
+      "title": "Improve the desktop/laptop login UX resilience by detecting and handling common desktop failure modes (e.g., popup blocked / interrupted login / stale already-authenticated client state) and providing a reliable recovery path using the existing Login button.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Allow users to post public book reviews",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Allow users to like and comment on book reviews",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Provide a personal reading progress tracker for users",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Implement backend data models and canister methods for a minimal book review platform: create a public review (book title, author, optional ISBN, rating 1–5, review text, createdAt), list latest reviews, fetch a single review, like/unlike a review, add a comment to a review, and list comments for a review.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Implement backend data models and canister methods for a minimal per-user reading tracker: add a book to the current user’s tracker (title, author, optional ISBN), update progress (status: Not started/In progress/Finished, and a numeric progress value such as percent 0–100), list the current user’s tracked books, and remove a tracked book.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add a reader dashboard to monitor reading metrics such as pages read, books completed, and hours spent reading",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add backend support for reading-metrics tracking per authenticated user so the app can monitor reading by pages, books, and hours.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Publish the app (run build and fully publish the currently deployed draft)",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Package the web app for Android and prepare steps/artifacts needed to publish it on the Google Play Store (e.g., generate an AAB via a web-to-app wrapper and provide guidance).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Update the UI/UX to use an attractive light color theme (light palette and consistent styling across the app)",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Change the header and footer to use different colors (adjust UI theme styling for these sections)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Book Reviews",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
