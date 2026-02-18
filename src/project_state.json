@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
+  "projectStateVersion": 27,
   "summary": "Simple book review platform where users can post public reviews, like and comment on others’ reviews, and track their own reading progress, including a reader dashboard for monitoring reading metrics (pages, books, hours).",
   "architectural_notes": [],
   "known_issues": [
@@ -176,6 +176,22 @@
       "title": "Improve the desktop/laptop login UX resilience by detecting and handling common desktop failure modes (e.g., popup blocked / interrupted login / stale already-authenticated client state) and providing a reliable recovery path using the existing Login button.",
       "reqIds": [
         "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fully-publish-the-currently-deployed-draft-draft-version-12-so-the-latest-frontend-and-backend-changes-are-live-not-just-a-draft-deployment",
+      "title": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-publication-succeeds-manually-verify-the-published-build-using-the-existing-checklist-in-frontend-deployment-smoke-check-md-ensuring-that-all-core-routes-load-and-that-the-reader-dashboard-is-reachable-at-dashboard-and-via-the-primary-navigation-on-both-desktop-and-mobile-screen-sizes",
+      "title": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
+      "reqIds": [
+        "REQ-26"
       ],
       "version": 1
     }

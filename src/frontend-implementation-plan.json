@@ -1,78 +1,41 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Internet Identity desktop login flow for Book Readers",
+  "title": "Publish readiness + post-publish smoke check wiring (Book Readers)",
   "requirements": [
     {
-      "id": "REQ-22",
-      "summary": "Make Internet Identity login reliably complete on desktop browsers and immediately update the app to a non-anonymous identity with visible, debuggable error handling.",
+      "id": "REQ-25",
+      "summary": "Add a visible published-build identifier in the UI to confirm the latest draft is what’s live after go-live publication.",
       "acceptanceCriteria": [
-        "From a desktop/laptop browser (at minimum: Chrome and Safari, or Chrome and Firefox), clicking the header Login button completes the Internet Identity flow and results in a non-anonymous identity in the app.",
-        "After successful login on desktop/laptop, authenticated-only UI (e.g., ability to create reviews / access Reading Tracker features) works without requiring a hard refresh.",
-        "If login fails, the UI surfaces a clear error state/message (in English) instead of silently failing, and the failure is logged to the console with enough detail to debug (e.g., error name/message)."
+        "The application is successfully fully published (go-live) from the current draft (Draft Version 12) without deployment errors.",
+        "The published app URL serves the latest version (not the prior published build)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Adjust the Internet Identity auth flow so login completion on desktop updates identity state reliably and failures propagate in a way the UI can surface (e.g., ensure the login function can be awaited and provides meaningful error information while still updating loginStatus/loginError)."
+          "path": "frontend/src/utils/buildInfo.ts",
+          "operation": "create",
+          "description": "Create a small utility to read a build identifier (e.g., from Vite env such as a version/commit/build timestamp) with safe fallbacks for environments where it’s not set."
         },
         {
-          "path": "frontend/src/components/LoginButton.tsx",
+          "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Improve desktop login feedback by surfacing a clear English error message when loginStatus indicates failure, and always console.log/console.error error name/message details for debugging; ensure UI updates to authenticated state without requiring a hard refresh. Verify the component's usage instructions before implementing."
-        },
+          "description": "Wire the build identifier into the existing footer (or other non-intrusive area) so QA can confirm the published URL is serving the latest build after go-live publication."
+        }
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "summary": "Update the existing deployment smoke checklist to explicitly verify core routes and Dashboard reachability via desktop and mobile primary navigation after publication.",
+      "acceptanceCriteria": [
+        "On the published deployment, the routes `/`, `/tracker`, and `/dashboard` load successfully.",
+        "The Dashboard page is reachable via the header primary navigation on desktop and via the mobile navigation menu on small screens.",
+        "A direct visit to `/dashboard` renders the Reader Dashboard page (not a 404, blank page, or redirect loop)."
+      ],
+      "file_operations": [
         {
           "path": "frontend/DEPLOYMENT_SMOKE_CHECK.md",
           "operation": "modify",
-          "description": "Update the manual smoke check to explicitly cover desktop/laptop Internet Identity login on at least two desktop browsers, verifying non-anonymous identity, authenticated UI availability without refresh, and visible error messaging + console diagnostics on failure."
-        }
-      ]
-    },
-    {
-      "id": "REQ-23",
-      "summary": "Harden Internet Identity configuration (identityProvider and derivationOrigin) with production-safe defaults and fallbacks that work across multiple deployed origins.",
-      "acceptanceCriteria": [
-        "`AuthClient.login()` is invoked with a non-empty `identityProvider` value in production builds (no undefined/empty provider).",
-        "If a derivation origin is required for the deployed origin, it is correctly configured so desktop/laptop login succeeds (no origin/derivation mismatch errors).",
-        "The app continues to work when opened via different origins users may use (e.g., direct canister URL vs a custom/served domain), without breaking login."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/internetIdentityConfig.ts",
-          "operation": "create",
-          "description": "Create a centralized helper that computes production-safe Internet Identity configuration at runtime (identityProvider + derivationOrigin), including robust fallbacks when build-time environment values are missing and accounting for common origin variants (local dev, direct canister URL, custom domain)."
-        },
-        {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Use the new runtime Internet Identity configuration helper to ensure AuthClient.login is always invoked with a non-empty identityProvider and an appropriate derivationOrigin fallback when required for the current origin."
-        },
-        {
-          "path": "frontend/src/main.tsx",
-          "operation": "modify",
-          "description": "Wire the runtime Internet Identity configuration into app bootstrap so that configuration is available consistently in production builds and across browsers (e.g., ensure any required runtime setup occurs before auth flow usage)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "summary": "Improve desktop/laptop login UX resilience by handling popup/redirect failures, interrupted flows, and stale authenticated state using the existing Login button as a recovery path.",
-      "acceptanceCriteria": [
-        "If the browser blocks the Internet Identity popup/redirect, the user sees an actionable message in the UI (in English) indicating they may need to allow popups and try again.",
-        "If the app detects a stale authenticated state (e.g., 'User is already authenticated' but identity is not usable), clicking Login results in a successful authenticated session without requiring manual local storage clearing.",
-        "Logout followed by Login works reliably on desktop/laptop without requiring a page reload."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Add resilient handling for common desktop failure modes: detect/report likely popup-blocked/interrupted login errors, treat stale 'already authenticated' states as recoverable (clear then retry), and ensure logout/login cycles transition state cleanly without requiring page reload."
-        },
-        {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "modify",
-          "description": "Update Login button behavior to provide a reliable recovery path: on known recoverable errors (e.g., stale authenticated state), trigger clear then retry login; on popup-blocked indications, show an actionable English message prompting the user to allow popups and try again. Verify the component's usage instructions before implementing."
+          "description": "Expand the checklist steps to include: (1) load `/`, `/tracker`, `/dashboard` directly on the published URL, (2) verify Dashboard is reachable via desktop header primary navigation, (3) verify Dashboard is reachable via mobile navigation menu at small screen sizes, and (4) verify the UI build identifier matches the intended published draft/build."
         }
       ]
     }

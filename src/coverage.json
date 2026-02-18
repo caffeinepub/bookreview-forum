@@ -1,52 +1,37 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T14:06:16.280Z",
+  "generatedAt": "2026-02-18T14:13:21.771Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-22",
-        "summary": "Reproduce and fix the Internet Identity authentication flow so that users can successfully log in when accessing the app from a laptop/desktop browser.",
+        "id": "REQ-25",
+        "summary": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useInternetIdentity.ts",
-          "frontend/src/components/LoginButton.tsx",
-          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+          "frontend/src/utils/buildInfo.ts",
+          "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/LoginButton.tsx",
-          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+          "frontend/src/utils/buildInfo.ts",
+          "frontend/src/components/Layout.tsx"
         ]
       },
       {
-        "id": "REQ-23",
-        "summary": "Harden the Internet Identity configuration so it is valid in production across devices by ensuring the identityProvider and derivationOrigin configuration used by `AuthClient.login()` are always set to correct, production-safe values (including a safe fallback when environment values are missing).",
+        "id": "REQ-26",
+        "summary": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/internetIdentityConfig.ts",
-          "frontend/src/hooks/useInternetIdentity.ts",
-          "frontend/src/main.tsx"
+          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
         ],
         "matchedFiles": [
-          "frontend/src/utils/internetIdentityConfig.ts"
-        ]
-      },
-      {
-        "id": "REQ-24",
-        "summary": "Improve the desktop/laptop login UX resilience by detecting and handling common desktop failure modes (e.g., popup blocked / interrupted login / stale already-authenticated client state) and providing a reliable recovery path using the existing Login button.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useInternetIdentity.ts",
-          "frontend/src/components/LoginButton.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/LoginButton.tsx"
+          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
         ]
       }
     ]
@@ -57,8 +42,9 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/DEPLOYMENT_SMOKE_CHECK.md",
-    "frontend/src/components/LoginButton.tsx",
-    "frontend/src/utils/internetIdentityConfig.ts",
+    "frontend/src/backend.d.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/utils/buildInfo.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

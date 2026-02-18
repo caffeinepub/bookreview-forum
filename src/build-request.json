@@ -1,85 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Fix Internet Identity login failing on desktop/laptop",
+  "title": "Fully publish current draft and run post-publish smoke check",
   "projectName": "Book Readers",
-  "priority": "high",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-22",
-      "text": "Reproduce and fix the Internet Identity authentication flow so that users can successfully log in when accessing the app from a laptop/desktop browser.",
-      "target": "frontend",
+      "id": "REQ-25",
+      "text": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
+      "target": "unknown",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "Ok when i try to access it from laptop login authentication does not work"
+          "Yes publish"
         ]
       },
       "acceptanceCriteria": [
-        "From a desktop/laptop browser (at minimum: Chrome and Safari, or Chrome and Firefox), clicking the header Login button completes the Internet Identity flow and results in a non-anonymous identity in the app.",
-        "After successful login on desktop/laptop, authenticated-only UI (e.g., ability to create reviews / access Reading Tracker features) works without requiring a hard refresh.",
-        "If login fails, the UI surfaces a clear error state/message (in English) instead of silently failing, and the failure is logged to the console with enough detail to debug (e.g., error name/message)."
+        "The application is successfully fully published (go-live) from the current draft (Draft Version 12) without deployment errors.",
+        "The published app URL serves the latest version (not the prior published build)."
       ]
     },
     {
-      "id": "REQ-23",
-      "text": "Harden the Internet Identity configuration so it is valid in production across devices by ensuring the identityProvider and derivationOrigin configuration used by `AuthClient.login()` are always set to correct, production-safe values (including a safe fallback when environment values are missing).",
-      "target": "frontend",
+      "id": "REQ-26",
+      "text": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
+      "target": "unknown",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "Ok when i try to access it from laptop login authentication does not work"
+          "Yes publish"
         ]
       },
       "acceptanceCriteria": [
-        "`AuthClient.login()` is invoked with a non-empty `identityProvider` value in production builds (no undefined/empty provider).",
-        "If a derivation origin is required for the deployed origin, it is correctly configured so desktop/laptop login succeeds (no origin/derivation mismatch errors).",
-        "The app continues to work when opened via different origins users may use (e.g., direct canister URL vs a custom/served domain), without breaking login."
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "text": "Improve the desktop/laptop login UX resilience by detecting and handling common desktop failure modes (e.g., popup blocked / interrupted login / stale already-authenticated client state) and providing a reliable recovery path using the existing Login button.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ],
-        "quotes": [
-          "Ok when i try to access it from laptop login authentication does not work"
-        ]
-      },
-      "acceptanceCriteria": [
-        "If the browser blocks the Internet Identity popup/redirect, the user sees an actionable message in the UI (in English) indicating they may need to allow popups and try again.",
-        "If the app detects a stale authenticated state (e.g., 'User is already authenticated' but identity is not usable), clicking Login results in a successful authenticated session without requiring manual local storage clearing.",
-        "Logout followed by Login works reliably on desktop/laptop without requiring a page reload."
+        "On the published deployment, the routes `/`, `/tracker`, and `/dashboard` load successfully.",
+        "The Dashboard page is reachable via the header primary navigation on desktop and via the mobile navigation menu on small screens.",
+        "A direct visit to `/dashboard` renders the Reader Dashboard page (not a 404, blank page, or redirect loop)."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/hooks/useInternetIdentity.ts` or `frontend/src/hooks/useActor.ts` if they are in the immutable paths list (compose via wrappers or configuration changes elsewhere if needed).",
-    "Keep all backend logic in the single Motoko actor (`backend/main.mo`); only add a `backend/migration.mo` if a state upgrade is truly required for this fix."
+    "Do not modify files under `frontend/src/components/ui` (compose them only).",
+    "Do not edit any paths listed as immutable in SYSTEM_CONTEXT (e.g., `frontend/src/hooks/useInternetIdentity.ts(x)`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`)."
   ],
   "nonGoals": [
-    "Adding new authentication providers (only Internet Identity is in scope).",
-    "Implementing new product features unrelated to fixing desktop/laptop login (e.g., new pages, new review functionality).",
-    "Backend data model changes, unless proven necessary to resolve the login issue."
+    "Do not introduce new product features beyond publishing and verification.",
+    "Do not redesign UI/UX as part of this publish request.",
+    "Do not change backend data models or add new canister methods unless required to unblock publishing."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

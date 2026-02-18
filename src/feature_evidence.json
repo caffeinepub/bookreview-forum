@@ -2,11 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-reproduce-and-fix-the-internet-identity-authentication-flow-so-that-users-can-successfully-log-in-when-accessing-the-app-from-a-laptop-desktop-browser",
-      "featureTitle": "Reproduce and fix the Internet Identity authentication flow so that users can successfully log in when accessing the app from a laptop/desktop browser.",
+      "featureId": "feature-fully-publish-the-currently-deployed-draft-draft-version-12-so-the-latest-frontend-and-backend-changes-are-live-not-just-a-draft-deployment",
+      "featureTitle": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
       "files": [
-        "frontend/DEPLOYMENT_SMOKE_CHECK.md",
-        "frontend/src/components/LoginButton.tsx"
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/utils/buildInfo.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,15 +17,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-25"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-harden-the-internet-identity-configuration-so-it-is-valid-in-production-across-devices-by-ensuring-the-identityprovider-and-derivationorigin-configuration-used-by-authclient-login-are-always-set-to-correct-production-safe-values-including-a-safe-fallback-when-environment-values-are-missing",
-      "featureTitle": "Harden the Internet Identity configuration so it is valid in production across devices by ensuring the identityProvider and derivationOrigin configuration used by `AuthClient.login()` are always set to correct, production-safe values (including a safe fallback when environment values are missing).",
+      "featureId": "feature-after-publication-succeeds-manually-verify-the-published-build-using-the-existing-checklist-in-frontend-deployment-smoke-check-md-ensuring-that-all-core-routes-load-and-that-the-reader-dashboard-is-reachable-at-dashboard-and-via-the-primary-navigation-on-both-desktop-and-mobile-screen-sizes",
+      "featureTitle": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
       "files": [
-        "frontend/src/utils/internetIdentityConfig.ts"
+        "frontend/DEPLOYMENT_SMOKE_CHECK.md"
       ],
       "components": [
         "authorization@4.0.0",
@@ -36,26 +36,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-23"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-improve-the-desktop-laptop-login-ux-resilience-by-detecting-and-handling-common-desktop-failure-modes-e-g-popup-blocked-interrupted-login-stale-already-authenticated-client-state-and-providing-a-reliable-recovery-path-using-the-existing-login-button",
-      "featureTitle": "Improve the desktop/laptop login UX resilience by detecting and handling common desktop failure modes (e.g., popup blocked / interrupted login / stale already-authenticated client state) and providing a reliable recovery path using the existing Login button.",
-      "files": [
-        "frontend/src/components/LoginButton.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-24"
+        "REQ-26"
       ],
       "confidence": "high"
     }

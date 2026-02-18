@@ -3,6 +3,7 @@ import LoginButton from './LoginButton';
 import CopyAppLinkControl from './CopyAppLinkControl';
 import { BookOpen, Library, Home, BarChart3, Menu } from 'lucide-react';
 import { getReferralUtmContent } from '../utils/referral';
+import { getBuildIdentifier } from '../utils/buildInfo';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { useState } from 'react';
 
@@ -86,17 +87,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <p>© {new Date().getFullYear()} Book Readers. All rights reserved.</p>
               <CopyAppLinkControl />
             </div>
-            <p>
-              Built with ❤️ using{' '}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${getReferralUtmContent()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground hover:text-primary transition-colors font-medium"
-              >
-                caffeine.ai
-              </a>
-            </p>
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+              <p>
+                Built with ❤️ using{' '}
+                <a
+                  href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${getReferralUtmContent()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground hover:text-primary transition-colors font-medium"
+                >
+                  caffeine.ai
+                </a>
+              </p>
+              <span className="hidden md:inline text-muted-foreground/50">•</span>
+              <p className="text-xs text-muted-foreground/70 font-mono" title="Build identifier for verification">
+                {getBuildIdentifier()}
+              </p>
+            </div>
           </div>
         </div>
       </footer>

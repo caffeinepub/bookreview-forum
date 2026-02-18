@@ -1,61 +1,50 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T14:06:16.277Z",
-  "summary": "The diff adds a runtime Internet Identity config helper and improves the Login button’s error handling/recovery messaging, but it does not show the configuration being wired into `AuthClient.login()` or any concrete change to the underlying Internet Identity auth flow/hooks. Several requested desktop login reliability requirements therefore cannot be verified as implemented from the provided diff summary.",
+  "generatedAt": "2026-02-18T14:13:21.768Z",
+  "summary": "The diff focuses on adding a build identifier utility, updating the Layout navigation (including mobile sheet navigation) and updating the deployment smoke-check document. It does not provide evidence of actually fully publishing Draft Version 12 or of performing the post-publish manual verification on the published URL.",
   "missing_requirements": [
     {
-      "id": "REQ-22",
-      "requirement": "Reproduce and fix the Internet Identity authentication flow so that users can successfully log in from desktop/laptop browsers, resulting in a non-anonymous identity and authenticated-only UI working without refresh, with clear UI error + console logging on failure.",
-      "reason": "The only functional frontend change shown is `LoginButton.tsx` adding UI error messaging and retry logic; there is no evidence in the diff summary that the actual Internet Identity auth flow (e.g., the `AuthClient.login()` call path / identity propagation to the app) was changed or fixed to ensure a successful non-anonymous identity on desktop without refresh.",
+      "id": "REQ-25",
+      "requirement": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
+      "reason": "The diff shows only source/code/documentation changes and contains no evidence of a production publication/go-live action (e.g., deploy config changes, release scripts, CI/CD changes, or any other publishing mechanism) nor any evidence that the published URL now serves the latest version.",
       "evidence": [
-        "frontend/src/components/LoginButton.tsx",
-        "frontend/src/hooks/useInternetIdentity.ts (explicitly not shown/modified in diff summary)",
-        "frontend/src/hooks/useActor.ts (explicitly not shown/modified in diff summary)"
+        "File diff summary shows only: frontend/src/utils/buildInfo.ts, frontend/src/components/Layout.tsx, frontend/DEPLOYMENT_SMOKE_CHECK.md, frontend-file-summaries.txt, project_state.json"
       ]
     },
     {
-      "id": "REQ-23",
-      "requirement": "Harden Internet Identity configuration so `AuthClient.login()` always uses correct production-safe `identityProvider` and `derivationOrigin` values with safe fallbacks, working across different origins.",
-      "reason": "A new helper `getInternetIdentityConfig()` is added, but the diff summary does not show it being used anywhere (no modifications shown to the auth hook(s) where `AuthClient.login()` would be invoked). Therefore there is no evidence `AuthClient.login()` is now called with a non-empty `identityProvider` or that `derivationOrigin` is correctly applied.",
+      "id": "REQ-26",
+      "requirement": "After publication succeeds, manually verify the published build using the existing checklist in frontend/DEPLOYMENT_SMOKE_CHECK.md, ensuring routes load and Dashboard is reachable via navigation on desktop and mobile.",
+      "reason": "The diff includes updates to the checklist and navigation code, but does not provide evidence that post-publish verification was actually performed on a published deployment (no recorded results, logs, screenshots, or other proof of manual verification).",
       "evidence": [
-        "frontend/src/utils/internetIdentityConfig.ts",
-        "frontend/src/components/LoginButton.tsx"
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "requirement": "Improve desktop/laptop login UX resilience by detecting/handling popup blocked/interrupted login/stale authenticated state and providing a reliable recovery path via the existing Login button (including logout->login without reload).",
-      "reason": "`LoginButton.tsx` adds messaging for popup-blocked errors and a retry path for an 'already authenticated' stale state, but the diff summary does not show changes to the underlying auth client state management (in the hook) needed to ensure recovery reliably works (including logout followed by login without reload). This cannot be confirmed from the provided changes.",
-      "evidence": [
-        "frontend/src/components/LoginButton.tsx",
-        "frontend/src/hooks/useInternetIdentity.ts (not shown/modified in diff summary)"
+        "frontend/DEPLOYMENT_SMOKE_CHECK.md",
+        "frontend/src/components/Layout.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added a deployment smoke check document/checklist.",
-      "reason": "Not requested by REQ-22/23/24 (which focus on fixing/hardening the Internet Identity login flow and UX resilience).",
+      "description": "Added a build identifier utility (build timestamp/version environment variable reading) for display/verification.",
+      "reason": "REQ-25/REQ-26 request publishing and manual verification using an existing checklist; they do not explicitly request adding new build metadata utilities or UI elements for build identification.",
       "evidence": [
-        "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+        "frontend/src/utils/buildInfo.ts",
+        "frontend/src/components/Layout.tsx (imports getBuildIdentifier)"
       ]
     },
     {
-      "description": "Updated project state/feature summary metadata.",
-      "reason": "Not requested by REQ-22/23/24; appears to be internal bookkeeping rather than part of the specified login fix.",
+      "description": "Modified the deployment smoke-check checklist to include a 'Build Verification' step referencing a footer build identifier format.",
+      "reason": "REQ-26 asks to use the existing checklist in frontend/DEPLOYMENT_SMOKE_CHECK.md for verification; the diff shows edits/expansion to that checklist rather than only executing it.",
       "evidence": [
-        "project_state.json",
-        "frontend-file-summaries.txt"
+        "frontend/DEPLOYMENT_SMOKE_CHECK.md"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.7,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/DEPLOYMENT_SMOKE_CHECK.md",
-    "frontend/src/components/LoginButton.tsx",
-    "frontend/src/utils/internetIdentityConfig.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/utils/buildInfo.ts",
     "project_state.json"
   ]
 }

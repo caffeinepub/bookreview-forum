@@ -86,5 +86,4 @@ export interface backendInterface {
     startReadingSession(bookId: bigint): Promise<void>;
     unlikeReview(reviewId: ReviewId): Promise<void>;
     updateBookProgress(bookId: bigint, status: string, percentage: bigint): Promise<void>;
-    _initializeAccessControlWithSecret(secret: string): Promise<void>;
 }
