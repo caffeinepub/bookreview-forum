@@ -8,14 +8,37 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const ReviewId = IDL.Nat;
 export const Rating = IDL.Nat;
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const AddReviewInput = IDL.Record({
+  'title' : IDL.Text,
+  'isbn' : IDL.Opt(IDL.Text),
+  'cover' : IDL.Opt(ExternalBlob),
+  'reviewText' : IDL.Text,
+  'author' : IDL.Text,
+  'rating' : IDL.Nat,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserProfile = IDL.Record({
+  'name' : IDL.Text,
+  'avatar' : IDL.Opt(ExternalBlob),
+});
 export const Time = IDL.Int;
 export const Comment = IDL.Record({
   'id' : IDL.Nat,
@@ -29,6 +52,7 @@ export const Review = IDL.Record({
   'title' : IDL.Text,
   'isbn' : IDL.Opt(IDL.Text),
   'createdAt' : Time,
+  'cover' : IDL.Opt(ExternalBlob),
   'reviewText' : IDL.Text,
   'likedBy' : IDL.Vec(IDL.Principal),
   'author' : IDL.Text,
@@ -60,6 +84,32 @@ export const TrackedBook = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'addComment' : IDL.Func([ReviewId, IDL.Text, IDL.Text], [IDL.Nat], []),
   'addReview' : IDL.Func(
@@ -67,6 +117,7 @@ export const idlService = IDL.Service({
       [ReviewId],
       [],
     ),
+  'addReviewWithCover' : IDL.Func([AddReviewInput], [ReviewId], []),
   'addTrackedBook' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
       [IDL.Nat],
@@ -110,14 +161,37 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const ReviewId = IDL.Nat;
   const Rating = IDL.Nat;
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const AddReviewInput = IDL.Record({
+    'title' : IDL.Text,
+    'isbn' : IDL.Opt(IDL.Text),
+    'cover' : IDL.Opt(ExternalBlob),
+    'reviewText' : IDL.Text,
+    'author' : IDL.Text,
+    'rating' : IDL.Nat,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserProfile = IDL.Record({
+    'name' : IDL.Text,
+    'avatar' : IDL.Opt(ExternalBlob),
+  });
   const Time = IDL.Int;
   const Comment = IDL.Record({
     'id' : IDL.Nat,
@@ -131,6 +205,7 @@ export const idlFactory = ({ IDL }) => {
     'title' : IDL.Text,
     'isbn' : IDL.Opt(IDL.Text),
     'createdAt' : Time,
+    'cover' : IDL.Opt(ExternalBlob),
     'reviewText' : IDL.Text,
     'likedBy' : IDL.Vec(IDL.Principal),
     'author' : IDL.Text,
@@ -159,6 +234,32 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'addComment' : IDL.Func([ReviewId, IDL.Text, IDL.Text], [IDL.Nat], []),
     'addReview' : IDL.Func(
@@ -166,6 +267,7 @@ export const idlFactory = ({ IDL }) => {
         [ReviewId],
         [],
       ),
+    'addReviewWithCover' : IDL.Func([AddReviewInput], [ReviewId], []),
     'addTrackedBook' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
         [IDL.Nat],

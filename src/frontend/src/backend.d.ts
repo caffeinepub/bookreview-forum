@@ -7,20 +7,42 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export class ExternalBlob {
+    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
+    getDirectURL(): string;
+    static fromURL(url: string): ExternalBlob;
+    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
+    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
+}
 export type Time = bigint;
 export type Rating = bigint;
-export interface ReadingSession {
-    startTime: Time;
-    endTime?: Time;
-    bookId: bigint;
-    pagesRead: bigint;
-}
 export interface TrackedBook {
     id: bigint;
     title: string;
     isbn?: string;
     author: string;
     progress: Progress;
+}
+export interface ReadingSession {
+    startTime: Time;
+    endTime?: Time;
+    bookId: bigint;
+    pagesRead: bigint;
+}
+export interface Comment {
+    id: bigint;
+    createdAt: Time;
+    user: string;
+    reviewId: ReviewId;
+    commentText: string;
+}
+export interface AddReviewInput {
+    title: string;
+    isbn?: string;
+    cover?: ExternalBlob;
+    reviewText: string;
+    author: string;
+    rating: bigint;
 }
 export interface ReadingMetrics {
     totalHours: bigint;
@@ -33,26 +55,21 @@ export interface Progress {
     percentage: bigint;
 }
 export type ReviewId = bigint;
-export interface Comment {
-    id: bigint;
-    createdAt: Time;
-    user: string;
-    reviewId: ReviewId;
-    commentText: string;
-}
-export interface UserProfile {
-    name: string;
-}
 export interface Review {
     id: ReviewId;
     title: string;
     isbn?: string;
     createdAt: Time;
+    cover?: ExternalBlob;
     reviewText: string;
     likedBy: Array<Principal>;
     author: string;
     likes: bigint;
     rating: Rating;
+}
+export interface UserProfile {
+    name: string;
+    avatar?: ExternalBlob;
 }
 export enum UserRole {
     admin = "admin",
@@ -62,6 +79,7 @@ export enum UserRole {
 export interface backendInterface {
     addComment(reviewId: ReviewId, user: string, commentText: string): Promise<bigint>;
     addReview(title: string, author: string, isbn: string | null, rating: Rating, reviewText: string): Promise<ReviewId>;
+    addReviewWithCover(input: AddReviewInput): Promise<ReviewId>;
     addTrackedBook(title: string, author: string, isbn: string | null): Promise<bigint>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     finishBook(): Promise<void>;

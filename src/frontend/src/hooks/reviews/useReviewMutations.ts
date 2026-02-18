@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from '../useActor';
-import type { ReviewId, Rating } from '../../backend';
+import type { ReviewId, Rating, AddReviewInput } from '../../backend';
 
 export function useAddReview() {
   const { actor } = useActor();
@@ -13,9 +13,23 @@ export function useAddReview() {
       isbn: string | null;
       rating: Rating;
       reviewText: string;
+      cover?: AddReviewInput['cover'];
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.addReview(data.title, data.author, data.isbn, data.rating, data.reviewText);
+      
+      if (data.cover) {
+        const input: AddReviewInput = {
+          title: data.title,
+          author: data.author,
+          isbn: data.isbn || undefined,
+          rating: data.rating,
+          reviewText: data.reviewText,
+          cover: data.cover,
+        };
+        return actor.addReviewWithCover(input);
+      } else {
+        return actor.addReview(data.title, data.author, data.isbn, data.rating, data.reviewText);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });

@@ -1,50 +1,98 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T14:13:21.771Z",
+  "generatedAt": "2026-02-18T14:22:08.376Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 5,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-25",
-        "summary": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
+        "id": "REQ-27",
+        "summary": "Extend the backend data model and canister methods to support an optional uploaded book-cover attachment on each review, including storing the image data and returning it when fetching/listing reviews.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-28",
+        "summary": "Update the Review creation UI on the Reviews Feed page to allow authenticated users to attach an optional book cover image while writing a review, including basic client-side validation and preview before publishing.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/buildInfo.ts",
-          "frontend/src/components/Layout.tsx"
+          "frontend/src/pages/ReviewsFeedPage.tsx",
+          "frontend/src/hooks/reviews/useReviewMutations.ts",
+          "frontend/src/utils/uploadValidation.ts"
         ],
         "matchedFiles": [
-          "frontend/src/utils/buildInfo.ts",
-          "frontend/src/components/Layout.tsx"
+          "frontend/src/pages/ReviewsFeedPage.tsx",
+          "frontend/src/hooks/reviews/useReviewMutations.ts",
+          "frontend/src/utils/uploadValidation.ts"
         ]
       },
       {
-        "id": "REQ-26",
-        "summary": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
+        "id": "REQ-29",
+        "summary": "Render the uploaded book cover image (when present) in the review cards on the Reviews Feed page and on the Review Detail page, with sensible fallback styling when no cover is attached.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+          "frontend/src/pages/ReviewsFeedPage.tsx",
+          "frontend/src/pages/ReviewDetailPage.tsx",
+          "frontend/src/hooks/useExternalBlobImageUrl.ts"
         ],
         "matchedFiles": [
-          "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+          "frontend/src/pages/ReviewsFeedPage.tsx",
+          "frontend/src/pages/ReviewDetailPage.tsx",
+          "frontend/src/hooks/useExternalBlobImageUrl.ts"
+        ]
+      },
+      {
+        "id": "REQ-30",
+        "summary": "Extend the backend user profile model to support an optional user profile picture (avatar) upload per user, and allow saving/updating it via the existing authenticated profile save flow.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-31",
+        "summary": "Update the profile setup/edit UI to allow each authenticated user to upload (and update) a profile picture, including preview and client-side validation, while keeping all user-facing text in English.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/hooks/auth/useSaveCallerUserProfile.ts",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/utils/uploadValidation.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/utils/uploadValidation.ts"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/blob-storage/Mixin.mo",
+    "backend/blob-storage/Storage.mo",
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/DEPLOYMENT_SMOKE_CHECK.md",
     "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
     "frontend/src/components/Layout.tsx",
-    "frontend/src/utils/buildInfo.ts",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/reviews/useReviewMutations.ts",
+    "frontend/src/hooks/useExternalBlobImageUrl.ts",
+    "frontend/src/pages/ReviewDetailPage.tsx",
+    "frontend/src/pages/ReviewsFeedPage.tsx",
+    "frontend/src/utils/uploadValidation.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useLatestReviews } from '../hooks/reviews/useLatestReviews';
 import { useAddReview } from '../hooks/reviews/useReviewMutations';
-import { Star, Heart, MessageCircle, Plus, X } from 'lucide-react';
+import { Star, Heart, MessageCircle, Plus, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { formatDate } from '../utils/format';
+import { validateImageFile, createPreviewUrl, revokePreviewUrl } from '../utils/uploadValidation';
+import { ExternalBlob } from '../backend';
+import { useExternalBlobImageUrl } from '../hooks/useExternalBlobImageUrl';
 
 export default function ReviewsFeedPage() {
   const navigate = useNavigate();
@@ -19,11 +22,65 @@ export default function ReviewsFeedPage() {
     rating: 5,
     reviewText: '',
   });
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [coverError, setCoverError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isAuthenticated = !!identity;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    return () => {
+      if (coverPreview) {
+        revokePreviewUrl(coverPreview);
+      }
+    };
+  }, [coverPreview]);
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      setCoverError(validation.error || 'Invalid image');
+      setCoverFile(null);
+      if (coverPreview) {
+        revokePreviewUrl(coverPreview);
+        setCoverPreview(null);
+      }
+      return;
+    }
+
+    setCoverError(null);
+    setCoverFile(file);
+    if (coverPreview) {
+      revokePreviewUrl(coverPreview);
+    }
+    setCoverPreview(createPreviewUrl(file));
+  };
+
+  const handleRemoveCover = () => {
+    setCoverFile(null);
+    setCoverError(null);
+    if (coverPreview) {
+      revokePreviewUrl(coverPreview);
+      setCoverPreview(null);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    let coverBlob: ExternalBlob | undefined = undefined;
+    if (coverFile) {
+      const bytes = new Uint8Array(await coverFile.arrayBuffer());
+      coverBlob = ExternalBlob.fromBytes(bytes);
+    }
+
     addReview(
       {
         title: formData.title,
@@ -31,10 +88,12 @@ export default function ReviewsFeedPage() {
         isbn: formData.isbn || null,
         rating: BigInt(formData.rating),
         reviewText: formData.reviewText,
+        cover: coverBlob,
       },
       {
         onSuccess: () => {
           setFormData({ title: '', author: '', isbn: '', rating: 5, reviewText: '' });
+          handleRemoveCover();
           setShowForm(false);
         },
       }
@@ -124,6 +183,47 @@ export default function ReviewsFeedPage() {
               </div>
             </div>
             <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Book Cover (optional)</label>
+              <div className="space-y-2">
+                {coverPreview ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={coverPreview}
+                      alt="Cover preview"
+                      className="w-32 h-48 object-cover rounded-md border border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveCover}
+                      className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleCoverChange}
+                      className="hidden"
+                      id="cover-upload"
+                    />
+                    <label
+                      htmlFor="cover-upload"
+                      className="flex items-center gap-2 px-4 py-2 bg-muted text-muted-foreground rounded-md cursor-pointer hover:bg-muted/80 transition-colors"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Upload Cover
+                    </label>
+                    <span className="text-xs text-muted-foreground">JPEG, PNG, or WebP (max 2MB)</span>
+                  </div>
+                )}
+                {coverError && <p className="text-sm text-destructive">{coverError}</p>}
+              </div>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-foreground mb-2">Your Review *</label>
               <textarea
                 value={formData.reviewText}
@@ -149,33 +249,7 @@ export default function ReviewsFeedPage() {
       ) : reviews && reviews.length > 0 ? (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div
-              key={review.id.toString()}
-              onClick={() => navigate({ to: '/review/$reviewId', params: { reviewId: review.id.toString() } })}
-              className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 hover:shadow-soft transition-all cursor-pointer"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-foreground mb-1">{review.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">by {review.author}</p>
-                  <div className="flex items-center gap-4 mb-3">
-                    {renderStars(Number(review.rating))}
-                    <span className="text-xs text-muted-foreground">{formatDate(review.createdAt)}</span>
-                  </div>
-                  <p className="text-foreground line-clamp-3">{review.reviewText}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Heart className="w-4 h-4" />
-                  <span>{Number(review.likes)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MessageCircle className="w-4 h-4" />
-                  <span>View comments</span>
-                </div>
-              </div>
-            </div>
+            <ReviewCard key={review.id.toString()} review={review} navigate={navigate} renderStars={renderStars} />
           ))}
         </div>
       ) : (
@@ -186,6 +260,46 @@ export default function ReviewsFeedPage() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ReviewCard({ review, navigate, renderStars }: any) {
+  const coverUrl = useExternalBlobImageUrl(review.cover);
+
+  return (
+    <div
+      onClick={() => navigate({ to: '/review/$reviewId', params: { reviewId: review.id.toString() } })}
+      className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 hover:shadow-soft transition-all cursor-pointer"
+    >
+      <div className="flex items-start gap-4">
+        {coverUrl && (
+          <img
+            src={coverUrl}
+            alt={`${review.title} cover`}
+            className="w-20 h-28 object-cover rounded-md border border-border flex-shrink-0"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-foreground mb-1">{review.title}</h3>
+          <p className="text-sm text-muted-foreground mb-3">by {review.author}</p>
+          <div className="flex items-center gap-4 mb-3">
+            {renderStars(Number(review.rating))}
+            <span className="text-xs text-muted-foreground">{formatDate(review.createdAt)}</span>
+          </div>
+          <p className="text-foreground line-clamp-3">{review.reviewText}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border text-sm text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <Heart className="w-4 h-4" />
+          <span>{Number(review.likes)}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <MessageCircle className="w-4 h-4" />
+          <span>View comments</span>
+        </div>
+      </div>
     </div>
   );
 }

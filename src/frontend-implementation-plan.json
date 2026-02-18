@@ -1,41 +1,90 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Publish readiness + post-publish smoke check wiring (Book Readers)",
+  "title": "Book Readers: Review cover attachments and profile avatar uploads (frontend)",
   "requirements": [
     {
-      "id": "REQ-25",
-      "summary": "Add a visible published-build identifier in the UI to confirm the latest draft is what’s live after go-live publication.",
+      "id": "REQ-28",
+      "summary": "Add optional book cover image attachment with validation + preview to the Write a Review form, and submit it with the review when provided.",
       "acceptanceCriteria": [
-        "The application is successfully fully published (go-live) from the current draft (Draft Version 12) without deployment errors.",
-        "The published app URL serves the latest version (not the prior published build)."
+        "The 'Write a Review' form (frontend/src/pages/ReviewsFeedPage.tsx) includes a file input for an optional book cover image.",
+        "The UI enforces basic client-side validation (supported image types and a size limit) and shows a preview thumbnail when an image is selected.",
+        "Submitting a review successfully publishes whether or not an image is attached, and clears the attachment state after success.",
+        "TypeScript build passes with no type errors related to the new attachment field(s)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/buildInfo.ts",
-          "operation": "create",
-          "description": "Create a small utility to read a build identifier (e.g., from Vite env such as a version/commit/build timestamp) with safe fallbacks for environments where it’s not set."
+          "path": "frontend/src/pages/ReviewsFeedPage.tsx",
+          "operation": "modify",
+          "description": "Update the 'Write a Review' form UI to include an optional cover image file input with client-side validation (type/size), preview thumbnail, and state reset on successful publish. Use the blob-storage component capability via the ExternalBlob type for representing the selected image to be uploaded; verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/components/Layout.tsx",
+          "path": "frontend/src/hooks/reviews/useReviewMutations.ts",
           "operation": "modify",
-          "description": "Wire the build identifier into the existing footer (or other non-intrusive area) so QA can confirm the published URL is serving the latest build after go-live publication."
+          "description": "Extend the add-review mutation to accept an optional cover attachment and call the appropriate backend capability (use addReviewWithCover when a cover is present; otherwise continue using addReview). Use the blob-storage component capability via ExternalBlob to pass cover data; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/uploadValidation.ts",
+          "operation": "create",
+          "description": "Add shared client-side helpers for validating image uploads (supported MIME types and max size) and for creating a safe preview URL (with guidance to revoke object URLs when replaced/cleared)."
         }
       ]
     },
     {
-      "id": "REQ-26",
-      "summary": "Update the existing deployment smoke checklist to explicitly verify core routes and Dashboard reachability via desktop and mobile primary navigation after publication.",
+      "id": "REQ-29",
+      "summary": "Render attached book cover images in review cards on the feed and on the review detail view, with clean fallback UI when absent.",
       "acceptanceCriteria": [
-        "On the published deployment, the routes `/`, `/tracker`, and `/dashboard` load successfully.",
-        "The Dashboard page is reachable via the header primary navigation on desktop and via the mobile navigation menu on small screens.",
-        "A direct visit to `/dashboard` renders the Reader Dashboard page (not a 404, blank page, or redirect loop)."
+        "Reviews Feed shows a cover thumbnail when a review includes a cover image; reviews without covers continue to render cleanly without broken image UI.",
+        "Review Detail page shows the cover image when present.",
+        "Images are rendered using the returned content type and bytes from the canister response (no external image hosting dependency)."
       ],
       "file_operations": [
         {
-          "path": "frontend/DEPLOYMENT_SMOKE_CHECK.md",
+          "path": "frontend/src/pages/ReviewsFeedPage.tsx",
           "operation": "modify",
-          "description": "Expand the checklist steps to include: (1) load `/`, `/tracker`, `/dashboard` directly on the published URL, (2) verify Dashboard is reachable via desktop header primary navigation, (3) verify Dashboard is reachable via mobile navigation menu at small screen sizes, and (4) verify the UI build identifier matches the intended published draft/build."
+          "description": "Update review cards to conditionally render a cover thumbnail when review.cover is present, with sensible layout/fallback styling when absent. Use the blob-storage component capability (ExternalBlob.getDirectURL() / bytes retrieval) to render the image from canister-returned data; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/ReviewDetailPage.tsx",
+          "operation": "modify",
+          "description": "Update the detail view to conditionally render the review cover image when present, and keep clean spacing/styling when no cover exists. Use the blob-storage component capability (ExternalBlob.getDirectURL() / bytes retrieval) to render the image from canister-returned data; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useExternalBlobImageUrl.ts",
+          "operation": "create",
+          "description": "Create a small React hook that derives a browser-usable image URL from an ExternalBlob, preferring a direct URL when available and otherwise falling back to bytes->Blob->objectURL, and revokes object URLs on cleanup. Use the blob-storage component capability for ExternalBlob handling; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-31",
+      "summary": "Add optional profile picture upload with validation + preview to the profile setup/edit flow, persist it on save, and display the avatar in the signed-in UI.",
+      "acceptanceCriteria": [
+        "The profile setup modal (frontend/src/components/ProfileSetupModal.tsx) includes an optional avatar upload control with preview.",
+        "Saving the profile stores the name and (if provided) avatar to the backend; users can proceed without uploading an avatar.",
+        "After save, the avatar is visible somewhere in the signed-in UI (e.g., header area) and does not break existing navigation or login/logout UX.",
+        "TypeScript build passes with no type errors related to the new profile avatar field(s)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "modify",
+          "description": "Extend the profile setup modal to include an optional avatar file input with client-side validation (type/size) and a preview. On submit, save both name and optional avatar using the existing save flow. Use the blob-storage component capability via ExternalBlob to represent and upload the avatar; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/auth/useSaveCallerUserProfile.ts",
+          "operation": "modify",
+          "description": "Ensure the profile save mutation fully supports the updated UserProfile shape including optional avatar, and continues to work when avatar is omitted. Use the blob-storage component capability via ExternalBlob for the avatar value; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Display the signed-in user's avatar (when available) in the header area without disrupting existing navigation and login/logout UX. Use the blob-storage component capability (ExternalBlob image URL/bytes) to render the avatar from canister-returned data; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/uploadValidation.ts",
+          "operation": "modify",
+          "description": "Extend shared upload validation helpers (if needed) to cover avatar-specific messaging while keeping all user-facing text in English."
         }
       ]
     }

@@ -1,53 +1,116 @@
 {
   "kind": "build_request",
-  "title": "Fully publish current draft and run post-publish smoke check",
+  "title": "Add book cover attachments to reviews and user profile picture uploads",
   "projectName": "Book Readers",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
-      "target": "unknown",
+      "id": "REQ-27",
+      "text": "Extend the backend data model and canister methods to support an optional uploaded book-cover attachment on each review, including storing the image data and returning it when fetching/listing reviews.",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "Yes publish"
+          "Just checking can we add attachment option to upload book cover while writing reviews and profile picture option for every users"
         ]
       },
       "acceptanceCriteria": [
-        "The application is successfully fully published (go-live) from the current draft (Draft Version 12) without deployment errors.",
-        "The published app URL serves the latest version (not the prior published build)."
+        "Backend `Review` type includes an optional cover image field (e.g., bytes + content type) without breaking existing review fields (title, author, isbn, rating, reviewText, createdAt, likes, likedBy).",
+        "`addReview(...)` supports supplying an optional cover image when creating a review (and continues to work when no image is supplied).",
+        "`getLatestReviews(limit)` and `getReview(id)` return the cover image field so the frontend can render it.",
+        "Server-side validation rejects unsupported content types and rejects images above a defined size limit to prevent oversized canister state growth."
       ]
     },
     {
-      "id": "REQ-26",
-      "text": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
-      "target": "unknown",
+      "id": "REQ-28",
+      "text": "Update the Review creation UI on the Reviews Feed page to allow authenticated users to attach an optional book cover image while writing a review, including basic client-side validation and preview before publishing.",
+      "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "Yes publish"
+          "Just checking can we add attachment option to upload book cover while writing reviews and profile picture option for every users"
         ]
       },
       "acceptanceCriteria": [
-        "On the published deployment, the routes `/`, `/tracker`, and `/dashboard` load successfully.",
-        "The Dashboard page is reachable via the header primary navigation on desktop and via the mobile navigation menu on small screens.",
-        "A direct visit to `/dashboard` renders the Reader Dashboard page (not a 404, blank page, or redirect loop)."
+        "The 'Write a Review' form (frontend/src/pages/ReviewsFeedPage.tsx) includes a file input for an optional book cover image.",
+        "The UI enforces basic client-side validation (supported image types and a size limit) and shows a preview thumbnail when an image is selected.",
+        "Submitting a review successfully publishes whether or not an image is attached, and clears the attachment state after success.",
+        "TypeScript build passes with no type errors related to the new attachment field(s)."
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "text": "Render the uploaded book cover image (when present) in the review cards on the Reviews Feed page and on the Review Detail page, with sensible fallback styling when no cover is attached.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Just checking can we add attachment option to upload book cover while writing reviews and profile picture option for every users"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Reviews Feed shows a cover thumbnail when a review includes a cover image; reviews without covers continue to render cleanly without broken image UI.",
+        "Review Detail page shows the cover image when present.",
+        "Images are rendered using the returned content type and bytes from the canister response (no external image hosting dependency)."
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "text": "Extend the backend user profile model to support an optional user profile picture (avatar) upload per user, and allow saving/updating it via the existing authenticated profile save flow.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Just checking can we add attachment option to upload book cover while writing reviews and profile picture option for every users"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend `UserProfile` type includes an optional avatar image field (e.g., bytes + content type) in addition to `name`.",
+        "`saveCallerUserProfile(profile)` can store/update the avatar for the authenticated caller and continues to work when avatar is omitted.",
+        "`getCallerUserProfile()` and `getUserProfile(user)` include the avatar field in responses (respecting existing access control).",
+        "Server-side validation rejects unsupported content types and rejects images above a defined size limit."
+      ]
+    },
+    {
+      "id": "REQ-31",
+      "text": "Update the profile setup/edit UI to allow each authenticated user to upload (and update) a profile picture, including preview and client-side validation, while keeping all user-facing text in English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Just checking can we add attachment option to upload book cover while writing reviews and profile picture option for every users"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The profile setup modal (frontend/src/components/ProfileSetupModal.tsx) includes an optional avatar upload control with preview.",
+        "Saving the profile stores the name and (if provided) avatar to the backend; users can proceed without uploading an avatar.",
+        "After save, the avatar is visible somewhere in the signed-in UI (e.g., header area) and does not break existing navigation or login/logout UX.",
+        "TypeScript build passes with no type errors related to the new profile avatar field(s)."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under `frontend/src/components/ui` (compose them only).",
-    "Do not edit any paths listed as immutable in SYSTEM_CONTEXT (e.g., `frontend/src/hooks/useInternetIdentity.ts(x)`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`)."
+    "Backend must remain a single-actor Motoko canister; keep all Motoko logic in backend/main.mo (add migration.mo only if truly required by stable state changes).",
+    "Do not edit any files under frontend/src/components/ui or any paths listed in SYSTEM_CONTEXT.frontend.immutablePaths.",
+    "Use English for any new or changed user-facing text.",
+    "Do not introduce external storage/services for images; store and serve image bytes via the canister.",
+    "Implement strict size/type validation for uploads to limit canister state growth."
   ],
   "nonGoals": [
-    "Do not introduce new product features beyond publishing and verification.",
-    "Do not redesign UI/UX as part of this publish request.",
-    "Do not change backend data models or add new canister methods unless required to unblock publishing."
+    "Adding third-party image hosting/CDN integrations.",
+    "Adding social login or any authentication provider other than Internet Identity.",
+    "Building real-time features (e.g., live updates via websockets).",
+    "Complex image editing/cropping tooling (basic upload + preview + validation only)."
   ],
   "imageRequirements": {
     "required": [],

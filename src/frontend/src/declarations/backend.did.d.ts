@@ -10,6 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AddReviewInput {
+  'title' : string,
+  'isbn' : [] | [string],
+  'cover' : [] | [ExternalBlob],
+  'reviewText' : string,
+  'author' : string,
+  'rating' : bigint,
+}
 export interface Comment {
   'id' : bigint,
   'createdAt' : Time,
@@ -17,6 +25,7 @@ export interface Comment {
   'reviewId' : ReviewId,
   'commentText' : string,
 }
+export type ExternalBlob = Uint8Array;
 export interface Progress { 'status' : string, 'percentage' : bigint }
 export type Rating = bigint;
 export interface ReadingMetrics {
@@ -36,6 +45,7 @@ export interface Review {
   'title' : string,
   'isbn' : [] | [string],
   'createdAt' : Time,
+  'cover' : [] | [ExternalBlob],
   'reviewText' : string,
   'likedBy' : Array<Principal>,
   'author' : string,
@@ -51,17 +61,44 @@ export interface TrackedBook {
   'author' : string,
   'progress' : Progress,
 }
-export interface UserProfile { 'name' : string }
+export interface UserProfile { 'name' : string, 'avatar' : [] | [ExternalBlob] }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'addComment' : ActorMethod<[ReviewId, string, string], bigint>,
   'addReview' : ActorMethod<
     [string, string, [] | [string], Rating, string],
     ReviewId
   >,
+  'addReviewWithCover' : ActorMethod<[AddReviewInput], ReviewId>,
   'addTrackedBook' : ActorMethod<[string, string, [] | [string]], bigint>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'finishBook' : ActorMethod<[], undefined>,

@@ -1,50 +1,66 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T14:13:21.768Z",
-  "summary": "The diff focuses on adding a build identifier utility, updating the Layout navigation (including mobile sheet navigation) and updating the deployment smoke-check document. It does not provide evidence of actually fully publishing Draft Version 12 or of performing the post-publish manual verification on the published URL.",
+  "generatedAt": "2026-02-18T14:22:08.372Z",
+  "summary": "Diff adds optional image attachments for review covers and user avatars using a `Storage.ExternalBlob` / `ExternalBlob` abstraction, updates frontend to upload/preview/validate images client-side, renders images on feed/detail pages, and shows avatar in the header. However, backend-side validation and the requested `addReview(...)` support for optional cover appear missing/changed, and the implementation seems to introduce an external/blob-storage mechanism that conflicts with the “store and serve image bytes via the canister” constraint.",
   "missing_requirements": [
     {
-      "id": "REQ-25",
-      "requirement": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
-      "reason": "The diff shows only source/code/documentation changes and contains no evidence of a production publication/go-live action (e.g., deploy config changes, release scripts, CI/CD changes, or any other publishing mechanism) nor any evidence that the published URL now serves the latest version.",
+      "id": "REQ-27",
+      "requirement": "Backend `addReview(...)` supports supplying an optional cover image when creating a review (and continues to work when no image is supplied).",
+      "reason": "Diff shows a new `addReviewWithCover(input)` method and frontend conditionally calling it when a cover exists, rather than extending the existing `addReview(...)` method to accept an optional cover image as requested.",
       "evidence": [
-        "File diff summary shows only: frontend/src/utils/buildInfo.ts, frontend/src/components/Layout.tsx, frontend/DEPLOYMENT_SMOKE_CHECK.md, frontend-file-summaries.txt, project_state.json"
+        "backend/main.mo",
+        "frontend/src/hooks/reviews/useReviewMutations.ts"
       ]
     },
     {
-      "id": "REQ-26",
-      "requirement": "After publication succeeds, manually verify the published build using the existing checklist in frontend/DEPLOYMENT_SMOKE_CHECK.md, ensuring routes load and Dashboard is reachable via navigation on desktop and mobile.",
-      "reason": "The diff includes updates to the checklist and navigation code, but does not provide evidence that post-publish verification was actually performed on a published deployment (no recorded results, logs, screenshots, or other proof of manual verification).",
+      "id": "REQ-27",
+      "requirement": "Server-side validation rejects unsupported content types and rejects images above a defined size limit for review cover uploads.",
+      "reason": "No backend validation logic for image type or size is shown; `AddReviewInput` accepts `cover : ?Storage.ExternalBlob` and `addReviewWithCover` assigns `cover = input.cover` without any visible validation.",
       "evidence": [
-        "frontend/DEPLOYMENT_SMOKE_CHECK.md",
-        "frontend/src/components/Layout.tsx"
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "requirement": "Server-side validation rejects unsupported content types and rejects images above a defined size limit for avatar uploads.",
+      "reason": "No backend validation logic for avatar type/size is shown; `saveCallerUserProfile(profile)` stores the profile directly including `avatar : ?Storage.ExternalBlob` without any visible validation.",
+      "evidence": [
+        "backend/main.mo"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added a build identifier utility (build timestamp/version environment variable reading) for display/verification.",
-      "reason": "REQ-25/REQ-26 request publishing and manual verification using an existing checklist; they do not explicitly request adding new build metadata utilities or UI elements for build identification.",
+      "description": "Introduced an `ExternalBlob`/`blob-storage` mechanism that appears to support direct URLs (`getDirectURL`) and external blob handling, implying image storage/serving outside the main canister bytes model.",
+      "reason": "BuildRequest explicitly disallows external storage/services for images and requires storing/serving image bytes via the canister. The diff imports and uses `blob-storage/Storage` + `MixinStorage`, and the frontend tries `blob.getDirectURL()` before falling back to bytes, which suggests an external/blob storage service abstraction not requested.",
       "evidence": [
-        "frontend/src/utils/buildInfo.ts",
-        "frontend/src/components/Layout.tsx (imports getBuildIdentifier)"
+        "backend/main.mo",
+        "backend/migration.mo",
+        "frontend/src/hooks/useExternalBlobImageUrl.ts"
       ]
     },
     {
-      "description": "Modified the deployment smoke-check checklist to include a 'Build Verification' step referencing a footer build identifier format.",
-      "reason": "REQ-26 asks to use the existing checklist in frontend/DEPLOYMENT_SMOKE_CHECK.md for verification; the diff shows edits/expansion to that checklist rather than only executing it.",
+      "description": "Added a new backend API method `addReviewWithCover` and frontend branching logic to choose between `addReviewWithCover` and `addReview`.",
+      "reason": "BuildRequest asked to extend `addReview(...)` to accept an optional cover image; it did not ask for a new parallel method and conditional client routing.",
       "evidence": [
-        "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+        "backend/main.mo",
+        "frontend/src/hooks/reviews/useReviewMutations.ts"
       ]
     }
   ],
-  "confidence": 0.7,
+  "confidence": 0.74,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/DEPLOYMENT_SMOKE_CHECK.md",
     "frontend/src/components/Layout.tsx",
-    "frontend/src/utils/buildInfo.ts",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/hooks/reviews/useReviewMutations.ts",
+    "frontend/src/hooks/useExternalBlobImageUrl.ts",
+    "frontend/src/pages/ReviewDetailPage.tsx",
+    "frontend/src/pages/ReviewsFeedPage.tsx",
+    "frontend/src/utils/uploadValidation.ts",
     "project_state.json"
   ]
 }

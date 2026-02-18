@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 29,
   "summary": "Simple book review platform where users can post public reviews, like and comment on others’ reviews, and track their own reading progress, including a reader dashboard for monitoring reading metrics (pages, books, hours).",
   "architectural_notes": [],
   "known_issues": [
@@ -9,7 +9,7 @@
     "Full publication (go-live) of Draft Version 7 failed with a deployment error after the draft was successfully created.",
     "Login/authentication does not work when accessing the app from a laptop (user reports login failure on desktop)."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-frontend-create-a-simple-ui-to-browse-public-reviews-view-a-review-detail-page-with-its-comments-and-allow-signed-in-users-to-create-reviews-like-unlike-reviews-and-add-comments",
@@ -194,6 +194,30 @@
         "REQ-26"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-review-creation-ui-on-the-reviews-feed-page-to-allow-authenticated-users-to-attach-an-optional-book-cover-image-while-writing-a-review-including-basic-client-side-validation-and-preview-before-publishing",
+      "title": "Update the Review creation UI on the Reviews Feed page to allow authenticated users to attach an optional book cover image while writing a review, including basic client-side validation and preview before publishing.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-render-the-uploaded-book-cover-image-when-present-in-the-review-cards-on-the-reviews-feed-page-and-on-the-review-detail-page-with-sensible-fallback-styling-when-no-cover-is-attached",
+      "title": "Render the uploaded book cover image (when present) in the review cards on the Reviews Feed page and on the Review Detail page, with sensible fallback styling when no cover is attached.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-profile-setup-edit-ui-to-allow-each-authenticated-user-to-upload-and-update-a-profile-picture-including-preview-and-client-side-validation-while-keeping-all-user-facing-text-in-english",
+      "title": "Update the profile setup/edit UI to allow each authenticated user to upload (and update) a profile picture, including preview and client-side validation, while keeping all user-facing text in English.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -271,6 +295,34 @@
       "id": "AR-11",
       "summary": "Change the header and footer to use different colors (adjust UI theme styling for these sections)",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Allow users to upload/attach a book cover image when writing a review",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add user profile pictures (avatar upload) for each user",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Extend the backend data model and canister methods to support an optional uploaded book-cover attachment on each review, including storing the image data and returning it when fetching/listing reviews.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Extend the backend user profile model to support an optional user profile picture (avatar) upload per user, and allow saving/updating it via the existing authenticated profile save flow.",
+      "reqIds": [
+        "REQ-30"
+      ],
       "status": "pending"
     }
   ],

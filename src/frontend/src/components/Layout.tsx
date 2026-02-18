@@ -1,14 +1,22 @@
 import { Link } from '@tanstack/react-router';
 import LoginButton from './LoginButton';
 import CopyAppLinkControl from './CopyAppLinkControl';
-import { BookOpen, Library, Home, BarChart3, Menu } from 'lucide-react';
+import { BookOpen, Library, Home, BarChart3, Menu, User } from 'lucide-react';
 import { getReferralUtmContent } from '../utils/referral';
 import { getBuildIdentifier } from '../utils/buildInfo';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { useState } from 'react';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from '../hooks/auth/useCallerUserProfile';
+import { useExternalBlobImageUrl } from '../hooks/useExternalBlobImageUrl';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { identity } = useInternetIdentity();
+  const { data: userProfile } = useGetCallerUserProfile();
+  const avatarUrl = useExternalBlobImageUrl(userProfile?.avatar);
+
+  const isAuthenticated = !!identity;
 
   const navLinks = [
     { to: '/', icon: Home, label: 'Reviews' },
@@ -41,7 +49,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 ))}
               </nav>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              {isAuthenticated && userProfile && (
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={userProfile.name}
+                      className="w-7 h-7 rounded-full object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-primary" />
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-foreground">{userProfile.name}</span>
+                </div>
+              )}
               <LoginButton />
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
@@ -54,7 +78,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64" aria-label="Mobile navigation menu">
-                  <nav className="flex flex-col gap-4 mt-8" aria-label="Mobile navigation">
+                  {isAuthenticated && userProfile && (
+                    <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={userProfile.name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-border"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border-2 border-border">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-foreground truncate">{userProfile.name}</p>
+                        <p className="text-xs text-muted-foreground">Signed in</p>
+                      </div>
+                    </div>
+                  )}
+                  <nav className="flex flex-col gap-4" aria-label="Mobile navigation">
                     {navLinks.map(({ to, icon: Icon, label }) => (
                       <Link
                         key={to}

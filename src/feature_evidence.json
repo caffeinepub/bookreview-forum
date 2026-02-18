@@ -2,11 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fully-publish-the-currently-deployed-draft-draft-version-12-so-the-latest-frontend-and-backend-changes-are-live-not-just-a-draft-deployment",
-      "featureTitle": "Fully publish the currently deployed draft (Draft Version 12) so the latest frontend and backend changes are live (not just a draft deployment).",
+      "featureId": "feature-update-the-review-creation-ui-on-the-reviews-feed-page-to-allow-authenticated-users-to-attach-an-optional-book-cover-image-while-writing-a-review-including-basic-client-side-validation-and-preview-before-publishing",
+      "featureTitle": "Update the Review creation UI on the Reviews Feed page to allow authenticated users to attach an optional book cover image while writing a review, including basic client-side validation and preview before publishing.",
       "files": [
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/utils/buildInfo.ts"
+        "frontend/src/hooks/reviews/useReviewMutations.ts",
+        "frontend/src/pages/ReviewsFeedPage.tsx",
+        "frontend/src/utils/uploadValidation.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -14,18 +15,21 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-25"
+        "REQ-28"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-after-publication-succeeds-manually-verify-the-published-build-using-the-existing-checklist-in-frontend-deployment-smoke-check-md-ensuring-that-all-core-routes-load-and-that-the-reader-dashboard-is-reachable-at-dashboard-and-via-the-primary-navigation-on-both-desktop-and-mobile-screen-sizes",
-      "featureTitle": "After publication succeeds, manually verify the published build using the existing checklist in `frontend/DEPLOYMENT_SMOKE_CHECK.md`, ensuring that all core routes load and that the Reader Dashboard is reachable at `/dashboard` and via the primary navigation on both desktop and mobile screen sizes.",
+      "featureId": "feature-render-the-uploaded-book-cover-image-when-present-in-the-review-cards-on-the-reviews-feed-page-and-on-the-review-detail-page-with-sensible-fallback-styling-when-no-cover-is-attached",
+      "featureTitle": "Render the uploaded book cover image (when present) in the review cards on the Reviews Feed page and on the Review Detail page, with sensible fallback styling when no cover is attached.",
       "files": [
-        "frontend/DEPLOYMENT_SMOKE_CHECK.md"
+        "frontend/src/hooks/useExternalBlobImageUrl.ts",
+        "frontend/src/pages/ReviewDetailPage.tsx",
+        "frontend/src/pages/ReviewsFeedPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -33,10 +37,33 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-29"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-profile-setup-edit-ui-to-allow-each-authenticated-user-to-upload-and-update-a-profile-picture-including-preview-and-client-side-validation-while-keeping-all-user-facing-text-in-english",
+      "featureTitle": "Update the profile setup/edit UI to allow each authenticated user to upload (and update) a profile picture, including preview and client-side validation, while keeping all user-facing text in English.",
+      "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/utils/uploadValidation.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-31"
       ],
       "confidence": "high"
     }

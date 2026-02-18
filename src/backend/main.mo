@@ -9,15 +9,23 @@ import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 import AccessControl "authorization/access-control";
+import Storage "blob-storage/Storage";
 import MixinAuthorization "authorization/MixinAuthorization";
+import MixinStorage "blob-storage/Mixin";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
+  type ReviewId = Nat;
+  type Rating = Nat;
+
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+  include MixinStorage();
 
-  // User Profile
   public type UserProfile = {
     name : Text;
+    avatar : ?Storage.ExternalBlob; // Optional user avatar
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
@@ -43,9 +51,6 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  type ReviewId = Nat;
-  type Rating = Nat;
-
   public type Review = {
     id : ReviewId;
     title : Text;
@@ -53,6 +58,7 @@ actor {
     isbn : ?Text;
     rating : Rating;
     reviewText : Text;
+    cover : ?Storage.ExternalBlob; // Optional book cover
     createdAt : Time.Time;
     likes : Nat;
     likedBy : [Principal];
@@ -113,7 +119,43 @@ actor {
 
   let readingMetrics = Map.empty<Principal, ReadingMetrics>();
 
-  // Reviews
+  public type AddReviewInput = {
+    title : Text;
+    author : Text;
+    isbn : ?Text;
+    rating : Nat;
+    reviewText : Text;
+    cover : ?Storage.ExternalBlob;
+  };
+
+  public shared ({ caller }) func addReviewWithCover(input : AddReviewInput) : async ReviewId {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can create reviews");
+    };
+
+    if (input.rating < 1 or input.rating > 5) {
+      Runtime.trap("Rating must be between 1 and 5");
+    };
+
+    let review : Review = {
+      id = nextReviewId;
+      title = input.title;
+      author = input.author;
+      isbn = input.isbn;
+      rating = input.rating;
+      reviewText = input.reviewText;
+      cover = input.cover;
+      createdAt = Time.now();
+      likes = 0;
+      likedBy = [];
+    };
+
+    reviews.add(nextReviewId, review);
+    let id = nextReviewId;
+    nextReviewId += 1;
+    id;
+  };
+
   public shared ({ caller }) func addReview(title : Text, author : Text, isbn : ?Text, rating : Rating, reviewText : Text) : async ReviewId {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can create reviews");
@@ -130,6 +172,7 @@ actor {
       isbn;
       rating;
       reviewText;
+      cover = null;
       createdAt = Time.now();
       likes = 0;
       likedBy = [];

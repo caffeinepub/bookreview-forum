@@ -7,6 +7,7 @@ import { useGetCallerUserProfile } from '../hooks/auth/useCallerUserProfile';
 import { Star, Heart, ArrowLeft, Send } from 'lucide-react';
 import { formatDate } from '../utils/format';
 import { useState } from 'react';
+import { useExternalBlobImageUrl } from '../hooks/useExternalBlobImageUrl';
 
 export default function ReviewDetailPage() {
   const { reviewId } = useParams({ from: '/review/$reviewId' });
@@ -19,6 +20,7 @@ export default function ReviewDetailPage() {
   const { mutate: unlikeReview, isPending: isUnliking } = useUnlikeReview();
   const { mutate: addComment, isPending: isAddingComment } = useAddComment();
   const [commentText, setCommentText] = useState('');
+  const coverUrl = useExternalBlobImageUrl(review?.cover);
 
   const isAuthenticated = !!identity;
   const hasLiked = review?.likedBy.some((p) => p.toString() === identity?.getPrincipal().toString());
@@ -98,15 +100,24 @@ export default function ReviewDetailPage() {
       </button>
 
       <div className="bg-card border border-border rounded-lg p-8 shadow-soft">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">{review.title}</h1>
-          <p className="text-lg text-muted-foreground mb-4">by {review.author}</p>
-          {review.isbn && (
-            <p className="text-sm text-muted-foreground mb-4">ISBN: {review.isbn}</p>
+        <div className="flex gap-6 mb-6">
+          {coverUrl && (
+            <img
+              src={coverUrl}
+              alt={`${review.title} cover`}
+              className="w-32 h-48 object-cover rounded-md border border-border flex-shrink-0"
+            />
           )}
-          <div className="flex items-center gap-4 mb-4">
-            {renderStars(Number(review.rating))}
-            <span className="text-sm text-muted-foreground">{formatDate(review.createdAt)}</span>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-foreground mb-2">{review.title}</h1>
+            <p className="text-lg text-muted-foreground mb-4">by {review.author}</p>
+            {review.isbn && (
+              <p className="text-sm text-muted-foreground mb-4">ISBN: {review.isbn}</p>
+            )}
+            <div className="flex items-center gap-4 mb-4">
+              {renderStars(Number(review.rating))}
+              <span className="text-sm text-muted-foreground">{formatDate(review.createdAt)}</span>
+            </div>
           </div>
         </div>
 

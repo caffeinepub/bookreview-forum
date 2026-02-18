@@ -1,17 +1,17 @@
 {
   "frontend/src/App.tsx": "Main application component with TanStack Router setup for all core routes (reviews feed, review detail, reading tracker, reader dashboard) including layout wrapper, profile setup modal, and development-only route verification utility with proper TypeScript typing.",
-  "frontend/src/components/Layout.tsx": "Shared layout component with responsive header navigation featuring \"Book Readers\" branding, primary-tinted header background, muted footer background, active link highlighting, caffeine.ai attribution, and build identifier display in footer for deployment verification.",
+  "frontend/src/components/Layout.tsx": "Shared layout component with responsive header navigation displaying user avatar when authenticated, primary-tinted header background, mobile menu with user profile display, and footer with caffeine.ai attribution.",
   "frontend/src/components/LoginButton.tsx": "Authentication button component with visible error messaging, detailed console logging for debugging, automatic error clearing, and recovery handling for stale auth states and popup-blocked scenarios with proper async function wrapping for delayed retry logic.",
-  "frontend/src/components/ProfileSetupModal.tsx": "Modal dialog prompting authenticated users to set their name on first login with token-based styling, primary-colored submit button with shadow, and proper actor dependency handling.",
-  "frontend/src/pages/ReviewsFeedPage.tsx": "Public reviews feed page displaying all book reviews with warm warning-colored star ratings, primary-colored action buttons with shadows, hover effects using primary color accents, and inline review form with token-based styling.",
-  "frontend/src/pages/ReviewDetailPage.tsx": "Individual review detail page showing full review content with warm warning-colored star ratings, primary-colored like button with fill state, token-based card styling with soft shadows, and comments section with primary-colored send button.",
+  "frontend/src/components/ProfileSetupModal.tsx": "Modal dialog prompting authenticated users to set their name and optional profile picture on first login with image upload, preview, validation, and ExternalBlob support.",
+  "frontend/src/pages/ReviewsFeedPage.tsx": "Public reviews feed page with inline review form supporting optional book cover image uploads with preview, validation, and display of cover thumbnails in review cards using ExternalBlob.",
+  "frontend/src/pages/ReviewDetailPage.tsx": "Individual review detail page displaying full review content with optional book cover image, star ratings, like functionality, and comments section.",
   "frontend/src/pages/ReadingTrackerPage.tsx": "Personal reading tracker page for authenticated users featuring primary-colored branding icon in sign-in prompt, accent-colored progress bar backgrounds, primary progress fills, token-based form inputs, and soft shadow cards.",
   "frontend/src/hooks/auth/useCallerUserProfile.ts": "React Query hook to fetch current user's profile with proper actor dependency handling to prevent modal flash.",
-  "frontend/src/hooks/auth/useSaveCallerUserProfile.ts": "React Query mutation hook to save user profile and invalidate cached profile data.",
+  "frontend/src/hooks/auth/useSaveCallerUserProfile.ts": "React Query mutation hook to save user profile including name and optional avatar with cache invalidation.",
   "frontend/src/hooks/reviews/useLatestReviews.ts": "React Query hook to fetch latest reviews from backend with configurable limit.",
   "frontend/src/hooks/reviews/useReview.ts": "React Query hook to fetch a single review by ID for the detail page.",
   "frontend/src/hooks/reviews/useComments.ts": "React Query hook to fetch all comments for a specific review.",
-  "frontend/src/hooks/reviews/useReviewMutations.ts": "React Query mutation hooks for adding reviews, liking/unliking reviews, and adding comments with cache invalidation.",
+  "frontend/src/hooks/reviews/useReviewMutations.ts": "React Query mutation hooks for review operations including add review with optional cover support (using addReviewWithCover when cover present), like/unlike reviews, and add comments with proper cache invalidation.",
   "frontend/src/hooks/tracker/useTrackedBooks.ts": "React Query hook to fetch authenticated user's tracked books, only enabled when user is logged in.",
   "frontend/src/hooks/tracker/useTrackerMutations.ts": "React Query mutation hooks for tracker operations including add/update/remove books, update book metrics (pages/hours), and finish book, with proper cache invalidation.",
   "frontend/src/utils/format.ts": "Utility function to format bigint timestamps into human-readable relative time strings.",
@@ -27,5 +27,7 @@
   "frontend/index.html": "HTML entry point with updated document title \"Book Readers\" for browser tab display.",
   "frontend/src/utils/internetIdentityConfig.ts": "Runtime configuration helper that computes production-safe Internet Identity settings (identityProvider and derivationOrigin) with robust fallbacks for local development, direct canister URLs, and custom domains.",
   "frontend/src/hooks/useInternetIdentity.ts": "Internet Identity authentication provider with enhanced desktop login support including stale state recovery, popup-blocked error detection, comprehensive error logging, and async login/clear methods that properly handle authentication state transitions.",
-  "frontend/src/utils/buildInfo.ts": "Utility module providing build information helpers that safely read Vite environment variables (version, timestamp) and generate short build identifiers for deployment verification with fallbacks for non-browser contexts."
+  "frontend/src/utils/buildInfo.ts": "Utility module providing build information helpers that safely read Vite environment variables (version, timestamp) and generate short build identifiers for deployment verification with fallbacks for non-browser contexts.",
+  "frontend/src/utils/uploadValidation.ts": "Shared client-side validation utilities for image uploads including file type/size validation, preview URL creation, and cleanup helpers with 2MB max size and support for JPEG/PNG/WebP formats.",
+  "frontend/src/hooks/useExternalBlobImageUrl.ts": "React hook that converts ExternalBlob instances to browser-usable image URLs, preferring direct URLs when available and falling back to bytes-to-Blob conversion with proper cleanup on unmount."
 }
